@@ -17,7 +17,7 @@ void Roll::Init() {
 	ifs.open("../../schooldata/Name1.txt", ios::in);
 	if (!ifs.is_open()) {
 		//文件打开失败给出提示
-		cout << "文件打开失败" << endl;
+		cout << "Init中文件打开失败" << endl;
 		return;
 	}
 	int sum = 450;
@@ -113,12 +113,16 @@ void Roll::Init() {
 void Roll::Callcl(int claAount, ofstream& ofs, int clnb) {
 	int sum = 0;//记录有效点名次数
 	int callingCnt = 0;
-	if (claAount <= 5) {
-		//前五次课抽点45个人	
-		callingCnt = this->notComeStu[clnb - 1].size() + 36 - 8*claAount;
+	if (claAount <= 3) {
+		//前五次课抽点n个人	
+		if (claAount == 1)
+			callingCnt =60;
+		else if (claAount == 2) 
+			callingCnt = this->notComeStu[clnb - 1].size()+10;
+		else 
+			callingCnt = this->notComeStu[clnb - 1].size()+5;
 	}
-	else {
-		//后课抽点30个人	
+	else {	
 		callingCnt = this->notComeStu[clnb-1].size();
 	}
 	if (this->notComeStu[clnb-1].empty()) {
@@ -140,19 +144,39 @@ void Roll::Callcl(int claAount, ofstream& ofs, int clnb) {
 				rolled[index] = 1;
 				i++;
 			}
+			//测试
+			//cout << "循环-1" << endl;
 		}
 	}
 	else {
 		//黑名单不为空，一部分从黑名单抽，一部分从黑名单之外的人抽
 		//抽点黑名单
-		for (int i = 0; i < this->notComeStu[clnb-1].size();i++) {
-			//修改被点次数
-			(this->notComeStu[clnb-1][i])->setCalledCnt();
-			int state = (this->notComeStu[clnb-1][i])->getState(claAount);
-			//如果没来就修改没来次数
-			if (state == 0) {
-				(this->notComeStu[clnb-1][i])->setNotComeCnt();
-				sum++;
+		int ncsize = this->notComeStu[clnb - 1].size();
+		if (claAount <= 3) {
+			//黑名单部分抽
+			int ar = ncsize * 2 / 3;
+			for (int i = 0; i <= ar; i++) {
+				//修改被点次数
+				int index = rand() % ncsize;
+				this->notComeStu[clnb - 1][index]->setCalledCnt();
+				int state = (this->notComeStu[clnb - 1][index])->getState(claAount);
+				//如果没来就修改没来次数
+				if (state == 0) {
+					(this->notComeStu[clnb - 1][index])->setNotComeCnt();
+					sum++;
+				}
+			}
+		}
+		else {
+			for (int i = 0; i < this->notComeStu[clnb - 1].size(); i++) {
+				//修改被点次数
+				this->notComeStu[clnb - 1][i]->setCalledCnt();
+				int state = (this->notComeStu[clnb - 1][i])->getState(claAount);
+				//如果没来就修改没来次数
+				if (state == 0) {
+					(this->notComeStu[clnb - 1][i])->setNotComeCnt();
+					sum++;
+				}
 			}
 		}
 		//在第2次之后就优先抽未被抽到的
@@ -182,11 +206,46 @@ void Roll::Callcl(int claAount, ofstream& ofs, int clnb) {
 					i++;
 					sumCal--;
 				}
+				//测试
+				//cout << "循环0" << endl;
 			}
-			if (sumCal > 0) {
-				//点完从来没有被点过的学生后还没有够人数，就继续点其他的非黑名单人
-				while (sumCal) {
-					int index = rand() % 90;
+			//点完从来没有被点过的学生后还没有够人数，就继续点其他的非黑名单人
+			while (sumCal>0) {
+				int index = rand() % 90;
+				int flag = 0;//标记该人是否在黑名单中
+				for (Student* s : this->notComeStu[clnb - 1]) {
+					if (s->getNum().compare(this->veClass[clnb - 1][index].getNum()) == 0) {
+						flag = 1;//说明index这个人在黑名单中
+						break;
+					}
+				}
+				if (flag == 0&&rooled[index]==0) {
+					//不在黑名单中并且刚刚没有被点过
+					//修改被点次数
+					rooled[index] = 1;
+					this->veClass[clnb - 1][index].setCalledCnt();
+					int state = this->veClass[clnb - 1][index].getState(claAount);
+					//如果没来修改没来次数,并且加入黑名单
+					if (state == 0) {
+						this->veClass[clnb - 1][index].setNotComeCnt();
+						this->notComeStu[clnb - 1].push_back(&(this->veClass[clnb - 1][index]));
+						sum++;
+					}
+					sumCal--;
+				}
+				//测试
+				//cout << "循环1" << endl;
+			}
+
+		}
+		else {
+			//所有学生都已经被点过至少一次了
+			int rooled[90] = { 0 };
+			int sumCal1 = this->getNotComeCntOne(this->veClass[clnb - 1]);
+			if (sumCal1 > 0) {
+				//优先点以前有过缺课记录的人
+				int index = 0;
+				while (sumCal > 0) {
 					int flag = 0;//标记该人是否在黑名单中
 					for (Student* s : this->notComeStu[clnb - 1]) {
 						if (s->getNum().compare(this->veClass[clnb - 1][index].getNum()) == 0) {
@@ -194,11 +253,12 @@ void Roll::Callcl(int claAount, ofstream& ofs, int clnb) {
 							break;
 						}
 					}
-					if (flag == 0&&rooled[index]==0) {
-						//不在黑名单中并且刚刚没有被点过
+					if (flag == 0 && rooled[index] == 0 && (this->veClass[clnb - 1][index].getNotComeCnt() == 1)) {
+						//不在黑名单中并且刚刚没有被点过并且有过缺课记录的
 						//修改被点次数
 						this->veClass[clnb - 1][index].setCalledCnt();
 						int state = this->veClass[clnb - 1][index].getState(claAount);
+						rooled[index] = 1;
 						//如果没来修改没来次数,并且加入黑名单
 						if (state == 0) {
 							this->veClass[clnb - 1][index].setNotComeCnt();
@@ -206,15 +266,23 @@ void Roll::Callcl(int claAount, ofstream& ofs, int clnb) {
 							sum++;
 						}
 						sumCal--;
+						sumCal1--;
+						//测试
+						//cout << "循环2内部" << endl;
+					}
+					//测试
+					//cout << "循环2" << endl;
+					if (sumCal == 0) {
+						break;
+					}
+					index++;
+					if (index == 90) {
+						break;
 					}
 				}
 			}
-
-		}
-		else {
-			//所有学生都已经被点过至少一次了
-			int rooled[90] = { 0 };
-			while (sumCal) {
+			while (sumCal>0) {
+				//其余的随机点
 				int index = rand() % 90;
 				int flag = 0;//标记该人是否在黑名单中
 				for (Student* s : this->notComeStu[clnb - 1]) {
@@ -228,6 +296,7 @@ void Roll::Callcl(int claAount, ofstream& ofs, int clnb) {
 					//修改被点次数
 					this->veClass[clnb - 1][index].setCalledCnt();
 					int state = this->veClass[clnb - 1][index].getState(claAount);
+					rooled[index] = 1;
 					//如果没来修改没来次数,并且加入黑名单
 					if (state == 0) {
 						this->veClass[clnb - 1][index].setNotComeCnt();
@@ -236,16 +305,17 @@ void Roll::Callcl(int claAount, ofstream& ofs, int clnb) {
 					}
 					sumCal--;
 				}
-			}
-
+				//测试
+				//cout << "循环3" << endl;
+			}		
 		}
 		
 	}
-	if (claAount>7 ) {
+	if (claAount==4 ) {
 		if (!(this->notComeStu[clnb-1].empty())) {
 			for (auto it = this->notComeStu[clnb-1].begin(); it != this->notComeStu[clnb-1].end();) {
-				if (((*it)->getCalledCnt())-((*it)->getNotComeCnt())>3&&((*it)->getNotComeCnt()<=2)) {
-					//没到次数小于三次的先移出黑名单
+				if (((*it)->getNotComeCnt()<=1)) {
+					//没到次数小于2次的先移出黑名单
 					it=this->notComeStu[clnb-1].erase(it);
 					
 				}
@@ -260,6 +330,7 @@ void Roll::Callcl(int claAount, ofstream& ofs, int clnb) {
 	this->scheme[clnb-1].push_back(p);
 	//写入文件保存结果
 	ofs <<clnb<< "班第" << claAount << "次抽点 抽点" << callingCnt << "人 未到" << sum << "人" << endl;
+
 
 }
 //void Roll::Callcl2(int claAount, ofstream& ofs, int clnb) {
@@ -637,4 +708,14 @@ double Roll::Calcu1() {
 		}
 	}
 	return sum / callcnt;
+}
+//计算有过缺课1次或者2次的人数
+int Roll::getNotComeCntOne(vector<Student>& veClass) {
+	int sum = 0;
+	for (Student s : veClass) {
+		if (s.getNotComeCnt() == 1) {
+			sum++;
+		}
+	}
+	return sum;
 }
