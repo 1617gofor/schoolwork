@@ -1,20 +1,52 @@
+Skip to content
+Search or jump toâ€¦
+Pull requests
+Issues
+Marketplace
+Explore
+ 
+@liangbaoliu 
+1617gofor
+/
+schoolwork
+Public
+Code
+Issues
+Pull requests
+1
+Actions
+Projects
+Security
+Insights
+schoolwork/Taking_rool/Taking_rool/data_generation.cpp
+@1617gofor
+1617gofor create taking roll
+Latest commit 36527e8 2 days ago
+ History
+ 1 contributor
+133 lines (127 sloc)  2.99 KB
+
 #include"student.h"
 #include<vector>
 #include<fstream>
 #include<algorithm>
 using namespace std;
-//Éú³É²âÊÔÊı¾İ²¢±£´æµ½ÎÄ¼ş
+//ç”Ÿæˆæµ‹è¯•æ•°æ®å¹¶ä¿å­˜åˆ°æ–‡ä»¶
 void DataG() {
 	vector<string> veName;
 	vector<Student>veStu;
 	ifstream ifs;
-	//Ğ´¶ÔÓ¦µÄÃûµ¥ÎÄ¼şÂ·¾¶
-	ifs.open("Name.txt", ios::in);
+	//å†™å¯¹åº”çš„åå•æ–‡ä»¶è·¯å¾„
+	ifs.open("../../schooldata/Name.txt", ios::in);
 	if (ifs.is_open()) {
 		char buf[1024] = { 0 };
 		while (ifs>>buf) {
 			veName.push_back((string)buf);
 		}
+	}
+	else {
+		cout << "æ–‡ä»¶æ‰“å¼€å¤±è´¥" << endl;
+		return;
 	}
 	ifs.close();
 	int sum[5] = {0,0,0,0,0};
@@ -26,24 +58,24 @@ void DataG() {
 	int cnt4 = rand() % 7 + 5;
 	int cnt5 = rand() % 7 + 5;
 	int cnt[5] = { cnt1,cnt2,cnt3,cnt4,cnt5 };
-	//cout << "Î´µ½ÈËÊı" << cnt << "¸ö" << endl;
-	//°ÑÃû×Ö·â×°³ÉÑ§Éú¶ÔÏó£¬²¢ÇÒ·ÅÈëÑ§Éú¼¯ºÏveStuÖĞ
+	//cout << "æœªåˆ°äººæ•°" << cnt << "ä¸ª" << endl;
+	//æŠŠåå­—å°è£…æˆå­¦ç”Ÿå¯¹è±¡ï¼Œå¹¶ä¸”æ”¾å…¥å­¦ç”Ÿé›†åˆveStuä¸­
 	int clnumber = 1;
 	for (int i = 0; i < 450; i++) {
 		string num = "032006";
 		int index = rand() % len;
-		string name = veName[index];//Ëæ»úÈ¡Ò»¸öÃû×Ö
+		string name = veName[index];//éšæœºå–ä¸€ä¸ªåå­—
 		vector<string>::iterator it = veName.begin();
 		int num1 = num0 + i;
-		num += to_string(num1);//Éú³ÉÑ§ºÅ
+		num += to_string(num1);//ç”Ÿæˆå­¦å·
 		int state = 1;
-		////cnt±íÊ¾È±¿ÎµÄÈËÊı
+		////cntè¡¨ç¤ºç¼ºè¯¾çš„äººæ•°
 		//if (cnt[clnumber-1])
 		//{
 		//	state = 0;
 		//	cnt[clnumber-1]--;
 		//}
-		//ÏŞÖÆÃ¿¸ö°àÖ»ÓĞ90ÈË
+		//é™åˆ¶æ¯ä¸ªç­åªæœ‰90äºº
 		if (sum[clnumber-1] == 90) {
 			clnumber++;
 		}
@@ -54,17 +86,17 @@ void DataG() {
 		veName.erase(it);
 		len--;
 	}
-	//·ÖÅästate×´Ì¬
+	//åˆ†é…stateçŠ¶æ€
 	int index = 0;
 	for (int i = 1; i <= 5; i++){
 		auto begin = veStu.begin() + 90 * (i - 1);
 		auto end = veStu.begin() + 90 * i;
-		random_shuffle(begin, end);//¶ÔÑ§ÉúÈİÆ÷½øĞĞÏ´ÅÆ²Ù×÷
-		int badmenCount = rand() % 4 + 5;//»µÑ§ÉúÈËÊı
+		random_shuffle(begin, end);//å¯¹å­¦ç”Ÿå®¹å™¨è¿›è¡Œæ´—ç‰Œæ“ä½œ
+		int badmenCount = rand() % 4 + 5;//åå­¦ç”Ÿäººæ•°
 		int badmenCount2 = badmenCount;
-		//¶ÔÃ¿¸ö°à¼¶×´Ì¬·ÖÅä
+		//å¯¹æ¯ä¸ªç­çº§çŠ¶æ€åˆ†é…
 		for (; index < veStu.size(); index++) {
-			//ÏÈ·ÖÅä»µÑ§Éú
+			//å…ˆåˆ†é…åå­¦ç”Ÿ
 			if (badmenCount > 0) {
 				for (int j = 1; j <= 20; j++) {
 					veStu[index].setState(j, 0);
@@ -78,17 +110,17 @@ void DataG() {
 				}
 				badmenCount--;
 			}
-			//Ã¿´Î¿Î³Ì
+			//æ¯æ¬¡è¯¾ç¨‹
 			else {
 				break;
 			}
 		}
-		//Ñ¡³öÃ¿´Î¿Î»áÆäËû0-3ÃûÎ´µ½Í¬Ñ§
+		//é€‰å‡ºæ¯æ¬¡è¯¾ä¼šå…¶ä»–0-3åæœªåˆ°åŒå­¦
 		for (int j = 1; j <= 20; j++) {
 			int index2;
 			int notComeN = rand() % 4;
 			while (notComeN) {
-				//Ñ¡³öÃ¿´Î¿ÎÒòÆäËûÔ­ÒòÎ´µ½µÄÍ¬Ñ§
+				//é€‰å‡ºæ¯æ¬¡è¯¾å› å…¶ä»–åŸå› æœªåˆ°çš„åŒå­¦
 				int stuIndex = rand() % (90 - badmenCount2);
 				index2 = index+stuIndex;
 				if (veStu[index2].getState(j) == 1) {
@@ -104,10 +136,10 @@ void DataG() {
 	
 
 
-	//Éú³ÉÑ§ÉúÊı¾İÎÄ¼ş
+	//ç”Ÿæˆå­¦ç”Ÿæ•°æ®æ–‡ä»¶
 	ofstream ofs;
-	//Ğ´°à¼¶Ãûµ¥ÎÄ¼ş´æ·ÅµÄÂ·¾¶
-	ofs.open("Name1.txt", ios::out | ios::trunc);
+	//å†™ç­çº§åå•æ–‡ä»¶å­˜æ”¾çš„è·¯å¾„
+	ofs.open("../../schooldata/Name1.txt", ios::out | ios::trunc);
 	vector<Student>::iterator it;
 	for (it = veStu.begin(); it != veStu.end(); it++) {
 		ofs << it->getClassNumber() << " " << it->getNum() << " "
@@ -118,7 +150,7 @@ void DataG() {
 		ofs << endl;
 	}
 	ofs.close();
-	cout << "Ãûµ¥Éú³É³É¹¦" << endl;
+	cout << "åå•ç”ŸæˆæˆåŠŸ" << endl;
 }
 
 int main() {
@@ -127,3 +159,18 @@ int main() {
 	system("pause");
 	return 0;
 }
+Footer
+Â© 2022 GitHub, Inc.
+Footer navigation
+Terms
+Privacy
+Security
+Status
+Docs
+Contact GitHub
+Pricing
+API
+Training
+Blog
+About
+schoolwork/data_generation.cpp at main Â· 1617gofor/schoolwork
