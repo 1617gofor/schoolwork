@@ -114,7 +114,7 @@ void Roll::Callcl(int claAount, ofstream& ofs, int clnb) {
 	int sum = 0;//记录有效点名次数
 	int callingCnt = 0;
 	if (claAount <= 3) {
-		//前五次课抽点n个人	
+		//前3次课抽点n个人	
 		if (claAount == 1)
 			callingCnt =60;
 		else if (claAount == 2) 
@@ -144,8 +144,6 @@ void Roll::Callcl(int claAount, ofstream& ofs, int clnb) {
 				rolled[index] = 1;
 				i++;
 			}
-			//测试
-			//cout << "循环-1" << endl;
 		}
 	}
 	else {
@@ -206,8 +204,6 @@ void Roll::Callcl(int claAount, ofstream& ofs, int clnb) {
 					i++;
 					sumCal--;
 				}
-				//测试
-				//cout << "循环0" << endl;
 			}
 			//点完从来没有被点过的学生后还没有够人数，就继续点其他的非黑名单人
 			while (sumCal>0) {
@@ -233,8 +229,6 @@ void Roll::Callcl(int claAount, ofstream& ofs, int clnb) {
 					}
 					sumCal--;
 				}
-				//测试
-				//cout << "循环1" << endl;
 			}
 
 		}
@@ -267,11 +261,7 @@ void Roll::Callcl(int claAount, ofstream& ofs, int clnb) {
 						}
 						sumCal--;
 						sumCal1--;
-						//测试
-						//cout << "循环2内部" << endl;
 					}
-					//测试
-					//cout << "循环2" << endl;
 					if (sumCal == 0) {
 						break;
 					}
@@ -305,8 +295,6 @@ void Roll::Callcl(int claAount, ofstream& ofs, int clnb) {
 					}
 					sumCal--;
 				}
-				//测试
-				//cout << "循环3" << endl;
 			}		
 		}
 		

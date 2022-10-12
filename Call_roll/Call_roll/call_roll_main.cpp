@@ -6,7 +6,8 @@ int main() {
 	srand((unsigned int)time(NULL));
 	//测试
 	double sum11 = 0.0;
-	for (int i = 0; i < 1; i++) {
+	//次循环可设置学期数
+	for (int i = 0; i < 2; i++) {
 		Roll rol;
 		rol.Init();//把输入的名单进行分班
 		ofstream ofs;
@@ -28,19 +29,13 @@ int main() {
 			cout << "第" << clCnt << "次的 E= " << rol.Calcu(clCnt) << endl;
 			clCnt++;
 		}
-		//测试--看一下到最后每个班的坏学生有几个
-		/*for (int j = 0; j < 5; j++) {
-			for (int i = 0; i < rol.notComeStu[j].size(); i++) {
-				cout << rol.notComeStu[j][i]->getName() << " ";
-			}
-			cout << endl;
-		}*/
 		sum11 += rol.Calcu1();
 		//cout << "总体 E = " << rol.Calcu1() << endl;
-		//cout << "保存成功" << endl;
 		ofs.close();
+		cout << "----------------------------------" << endl;
 	}
-	cout << sum11 / 1.0 << endl;
+	//cout << sum11 / 1.0 << endl;
+	cout << "方案已保存至schooldata文件夹的scheme文件中" << endl;
 	system("pause");
 	return 0;
 }

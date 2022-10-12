@@ -1,2 +1,7 @@
-﻿  call_roll_main.cpp
+﻿  callroll.cpp
+C:\C++learning\项目\Call_roll\Call_roll\callroll.cpp(121,53): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据
+C:\C++learning\项目\Call_roll\Call_roll\callroll.cpp(123,52): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据
+C:\C++learning\项目\Call_roll\Call_roll\callroll.cpp(126,47): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据
+C:\C++learning\项目\Call_roll\Call_roll\callroll.cpp(152,49): warning C4267: “初始化”: 从“size_t”转换到“int”，可能丢失数据
+C:\C++learning\项目\Call_roll\Call_roll\callroll.cpp(181,64): warning C4267: “初始化”: 从“size_t”转换到“int”，可能丢失数据
   Call_roll.vcxproj -> C:\C++learning\项目\Call_roll\x64\Debug\Call_roll.exe
